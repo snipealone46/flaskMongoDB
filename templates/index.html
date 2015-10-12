@@ -39,9 +39,17 @@
         </div>
     </div>
     <div class="container contentContainer">
-        <div class="row center">
-            <h1 class="center">Why This App Is Awesome?</h1>
-            <p class="lead center">Summary of the app's awesomeness</p>
+        <div class="row">
+            <div class="col-md-8">
+                <h1 class="center">Why This App Is Awesome?</h1>
+                <p class="lead center">Summary of the app's awesomeness</p>
+            </div>
+            {#momentjs can be used in comments#}
+            <div class="col-lg-4 center">
+                <p class="lead center">local time is<br>{{ moment(current_time).format('LTS') }}<br>That was {{ moment(current_time).fromNow(refresh=True) }}</p>
+                {#format(LTS) => get the time only with AM/PM#}
+                {#format(LLL) => get date and time#}
+            </div>
         </div>
         <div class="row marginTop">
             <div class="col-md-4">
@@ -64,6 +72,7 @@
 {% endblock %}
 {% block scripts %}
     {{ super() }}
+    {{ moment.include_moment() }}
     <script>
         $(".contentContainer").css("min-height", $(window).height());
     </script>
