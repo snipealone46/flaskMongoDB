@@ -1,0 +1,7 @@
+#ignore folders
+.idea/*
+
+#ignore single files
+.DS_Store
+
+
