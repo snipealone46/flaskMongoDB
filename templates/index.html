@@ -1,17 +1,21 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 {% block head %}
     {{ super() }}
     <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css">
 {% endblock %}
 {% block loginOrNot %}
-    <form class="navbar-form navbar-right">
+{#    {{ wtf.quick_form(login) }}#}
+    <form class="navbar-form navbar-right" method="post" }}>
         <div class="form-group">
-            <input type="email" placeholder="Email" class="form-control">
+            <input type="text" placeholder="User Name" class="form-control" name="ID">
         </div>
         <div class="form-group">
-            <input type="password" placeholder="Password" class="form-control">
+            <input type="password" placeholder="Password" class="form-control" name="password">
         </div>
-        <button type="submit" class="btn btn-success">Log in</button>
+        <button type="submit" class="btn btn-success" name="submit">Log in</button>
+{#        need the line below!!#}
+        {{ login.csrf_token }}
     </form>
 {% endblock %}
 {% block content %}
@@ -20,8 +24,8 @@
             <div class="col-md-8 col-md-offset-2" id="topRow">
                 <h1>Welcome!</h1>
                 <h1>
-                    {% if name %}
-                        {{ name }}
+                    {% if user %}
+                        {{ user }}
                     {% else %}
                         Watermelon users
                     {% endif %}
