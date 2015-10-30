@@ -8,6 +8,11 @@
 
       background-size: cover;
      }
+     #logoutButton {
+      padding-top: 8px;
+      position: absolute;
+      right: 40px;
+     }
      #topRow {
       margin-top: 100px;
       text-align: center;

@@ -27,10 +27,16 @@ class LoginDB(object):
     def checkexist(self):
         findmatch = self.login.find_one({"ID": "%s" % self.ID})
         if findmatch:
-            return True
+            return findmatch
         else:
             return False
 
+    def passwordmatch(self):
+        findmatch = self.checkexist()
+        if findmatch:
+            return findmatch['password'] == self.password
+        else:
+            return False
 
 class ID(Form):
     ID = StringField('username', [validators.InputRequired(message='please enter your username')])
@@ -52,13 +58,29 @@ class RegisterForm(ID):
 def forum():
     login = LoginForm()
     if login.validate_on_submit():
-        inputinfo = LoginDB(login.ID.data, login.password.data)
-        if inputinfo.checkexist():
-            session['user'] = login.ID.data
-        else:
-            flash('The username does not exist!')
-        return redirect(url_for('forum'))
-    return render_template('index.html', login=login, user=session.get('user'))
+        session['user'] = login.ID.data
+        session['password'] = login.password.data
+        return redirect(url_for('logon'))
+    elif 'user' in session:
+        return render_template('login_true.html', user=session.get('user'))
+    else:
+        return render_template('login_false.html', login=login)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def logon():
+    inputinfo = LoginDB(session.get('user'), session.get('password'))
+    if not inputinfo.passwordmatch():
+        session.pop('user', None)
+        flash('The username or password does not match our record!')
+    session.pop('password', None)
+    return redirect(url_for('forum'))
+
+
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    return redirect(url_for('forum'))
 
 
 if __name__ == '__main__':

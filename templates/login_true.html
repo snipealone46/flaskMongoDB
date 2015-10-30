@@ -1,0 +1,26 @@
+{% extends "index.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block loginOrNot %}
+    <div class="btn-group navbar-right" id="logoutButton">
+    <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ user }}<span class="caret"></span></button>
+    <ul class="dropdown-menu">
+        <li><a href="#">run history</a></li>
+        <li><a href="#">messages</a></li>
+        <li role="separator" class="divider"></li>
+        <li><a href="{{ url_for('logout') }}">log out</a></li>
+    </ul>
+    </div>
+{% endblock %}
+{% block greetings %}
+                <h1>Welcome!</h1>
+                <h1>{{ user }}</h1>
+                <p class="marginTop">Are you interested to join our mailing list?</p>
+                <p class="bold">If so, enter your email below</p>
+                <form class="marginTop">
+                    <div class="input-group col-md-8 col-md-offset-2">
+                        <span class="input-group-addon">@</span>
+                        <input type="email" placeholder="your email address" class="form-control">
+                    </div>
+                    <input type="submit" class="btn btn-success btn-lg marginTop">
+                </form>
+{% endblock %}
