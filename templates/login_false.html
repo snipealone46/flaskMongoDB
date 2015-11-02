@@ -1,8 +1,8 @@
 {% extends "index.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% block loginOrNot %}
-{#    {{ wtf.quick_form(login) }}#}
-    <form class="navbar-form navbar-right" method="post" }}>
+    {#    {{ wtf.quick_form(login) }}#}
+    <form class="navbar-form navbar-right" method="post">
         <div class="form-group">
             <input type="text" placeholder="User Name" class="form-control" name="ID">
         </div>
@@ -10,27 +10,41 @@
             <input type="password" placeholder="Password" class="form-control" name="password">
         </div>
         <button type="submit" class="btn btn-success" name="submit">Log in</button>
-{#        need the line below!!#}
+        {#        need the line below!!#}
         {{ login.csrf_token }}
+                <a href="{{ url_for('registration', editmode="newuser") }}" class="btn btn-info" role="button">New User?</a>
     </form>
 {% endblock %}
 {% block greetings %}
-                <h1>Welcome!</h1>
-                <h1>
-{#                    {% if user %}#}
-{#                        {{ user }}#}
-{#                    {% else %}#}
-{#                        Watermelon users#}
-{#                    {% endif %}#}
-                    Watermelon users
-                </h1>
-                <p class="marginTop">Are you interested to join our mailing list?</p>
-                <p class="bold">If so, enter your email below</p>
-                <form class="marginTop">
-                    <div class="input-group col-md-8 col-md-offset-2">
-                        <span class="input-group-addon">@</span>
-                        <input type="email" placeholder="your email address" class="form-control">
-                    </div>
-                    <input type="submit" class="btn btn-success btn-lg marginTop">
-                </form>
+    {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ message }}
+        </div>
+    {% endfor %}
+    {% if login.errors %}
+        {% for error in login.ID.errors %}
+            <div class="alert alert-danger">
+                <strong>Error! </strong>{{ error }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    <h1>Welcome!</h1>
+    <h1>
+        {#                    {% if user %}#}
+        {#                        {{ user }}#}
+        {#                    {% else %}#}
+        {#                        Watermelon users#}
+        {#                    {% endif %}#}
+        Watermelon users
+    </h1>
+    <p class="marginTop">Are you interested to join our mailing list?</p>
+    <p class="bold">If so, enter your email below</p>
+    <form class="marginTop">
+        <div class="input-group col-md-8 col-md-offset-2">
+            <span class="input-group-addon">@</span>
+            <input type="email" placeholder="your email address" class="form-control">
+        </div>
+        <input type="submit" class="btn btn-success btn-lg marginTop">
+    </form>
 {% endblock %}

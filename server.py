@@ -23,7 +23,7 @@ class LoginDB(object):
         self.ID = username
         self.password = password
 
-# checkexist(): if exist return true otherwise return false
+    # checkexist(): if exist return true otherwise return false
     def checkexist(self):
         findmatch = self.login.find_one({"ID": "%s" % self.ID})
         if findmatch:
@@ -38,6 +38,16 @@ class LoginDB(object):
         else:
             return False
 
+    def newuser(self):
+        newuser = {"ID": "%s" % self.ID, "password": "%s" % self.password}
+        self.login.insert_one(newuser)
+
+    def updatepassword(self):
+        needupdate = self.checkexist()
+        needupdate["password"] = self.password
+        self.login.save(needupdate)
+
+
 class ID(Form):
     ID = StringField('username', [validators.InputRequired(message='please enter your username')])
 
@@ -48,9 +58,15 @@ class LoginForm(ID):
 
 
 class RegisterForm(ID):
-    emailValMessage = "Please enter a valid email address"
-    userEmail = StringField('email', [validators.InputRequired(message=emailValMessage), validators.email(message=emailValMessage)])
+    # newPassword = PasswordField('password')
     newPassword = PasswordField('New Password', [validators.InputRequired(), validators.EqualTo('confirm', message='Passwords must match')])
+    confirm = PasswordField('Repeat the password')
+    submit = SubmitField('Submit')
+
+
+class ChangePassword(Form):
+    newPassword = PasswordField('New Password', [validators.InputRequired(), validators.EqualTo('confirm', message='Passwords must match')])
+    confirm = PasswordField('Repeat the password')
     submit = SubmitField('Submit')
 
 
@@ -81,6 +97,31 @@ def logon():
 def logout():
     session.pop('user', None)
     return redirect(url_for('forum'))
+
+
+@app.route('/registration/<editmode>', methods=['GET', 'POST'])
+def registration(editmode):
+    register = RegisterForm()
+    newpassword = ChangePassword()
+    if editmode == "newuser":
+        if register.validate_on_submit():
+            registerinfo = LoginDB(register.ID.data, register.newPassword.data)
+            if registerinfo.checkexist():
+                flash('This username is already taken')
+            else:
+                session['user'] = register.ID.data
+                registerinfo.newuser()
+            return redirect(url_for('registration', editmode="newuser"))
+        return render_template('registration.html', register=register, user=session.get('user'))
+    elif editmode == "changePassword":
+        if newpassword.validate_on_submit():
+            if 'user' in session:
+                registerinfo = LoginDB(session.get('user'), newpassword.newPassword.data)
+                registerinfo.updatepassword()
+            else:
+                flash('Please log in first')
+            return redirect(url_for('forum'))
+        return render_template('edit_password.html', register=register, user=session.get('user'))
 
 
 if __name__ == '__main__':
